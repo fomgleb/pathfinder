@@ -90,7 +90,7 @@ t_island *mx_file_to_islands(char *filename, int *islands_len, t_error *error) {
     long long int sum_of_bridge_lengths = 0;
 
     *islands_len = 0;
-    t_island *islands = malloc((lines_count - 1) * sizeof(t_island));
+    t_island *islands = malloc((lines_count - 1) * 2 * sizeof(t_island));
 
     for (int i = 1; i < lines_count; i++) {
         if (!mx_island_line_is_valid(str_lines[i])) {

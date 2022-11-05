@@ -6,9 +6,9 @@
 #include <stdlib.h>
 #include <fcntl.h>
 // For linux
-#include <malloc.h>
+// #include <malloc.h>
 // For macos
-// #include <malloc/malloc.h>
+#include <malloc/malloc.h>
 
 #include <stdio.h>
 
@@ -262,13 +262,6 @@ char *mx_del_extra_spaces(const char *str);
 // > size of pointer: 16
 char **mx_strsplit(char const *s, char c);
 char *mx_strjoin(char const *s1, char const *s2);
-// Description: Test with a random input
-// user output vs test output
-// 3c3,4
-// < size of pointer: 48
-// ---
-// > size of pointer: 80
-// > 0 leaks for 0 total leaked bytes
 char *mx_file_to_str(const char *file);
 char *mx_replace_substr(const char *str, const char *sub, const char *replace);
 int mx_read_line(char **lineptr, size_t buf_size, char delim, const int fd); // In progress

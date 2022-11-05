@@ -12,5 +12,6 @@ typedef struct s_route {
     t_bridge *cur_bridge;
 } t_route;
 
+void mx_free_routes_list(t_list **routes_list);
 t_list *mx_get_shortest_routes(t_island *src_island, t_island *dst_island);
 

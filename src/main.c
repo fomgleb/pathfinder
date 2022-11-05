@@ -29,6 +29,32 @@ void mx_print_route(t_route *route) {
     mx_printstr("\n========================================\n");
 }
 
+char *mx_bridges_to_str(t_list *bridges) {
+    char *bridges_str = NULL;
+    for (t_list *i = bridges; i != NULL; i = i->next) {
+        t_bridge *bridge = (t_bridge *)i->data;
+        int island_name_len = mx_strlen(bridge->dst_island->name);
+        char *new_bridges_str = mx_strnew(mx_strlen(bridges_str) + island_name_len);
+        if (bridges_str != NULL)
+            mx_strcat(new_bridges_str, bridges_str);
+        mx_strcat(new_bridges_str, bridge->dst_island->name);
+        free(bridges_str);
+        bridges_str = new_bridges_str;
+    }
+    return bridges_str;
+}
+
+bool mx_sort_routes(void *a, void *b) {
+    t_route *a_route = (t_route *)a;
+    t_route *b_route = (t_route *)b;
+    char *a_bridges_str = mx_bridges_to_str(a_route->bridges);
+    char *b_bridges_str = mx_bridges_to_str(b_route->bridges);
+    bool result = mx_strcmp(a_bridges_str, b_bridges_str) > 0 ? true : false;
+    free(a_bridges_str);
+    free(b_bridges_str);
+    return result;
+}
+
 int main(int argc, char **argv) {
     t_error error = {NO_ERRORS, NULL, -1};
     if (argc != 2) {
@@ -49,28 +75,28 @@ int main(int argc, char **argv) {
         for (int j = 0; j < islands_len; j++) {
             islands[j].is_passed = false;
         }
-        t_list *possible_routes_list = mx_get_shortest_routes(possible_island_pairs[i].island1, possible_island_pairs[i].island2);
-        for (int j = mx_list_size(possible_routes_list) - 1; j >= 0; j--) {
-            t_route *route = (t_route *)mx_get_by_index(possible_routes_list, j)->data;
-            if (route->cur_island == route->dst_island) {
-                mx_print_route(route);
-            }
-        }
-        for (t_list *j = possible_routes_list; j != NULL; j = j->next) {
+        t_list *shortest_routes = mx_get_shortest_routes(possible_island_pairs[i].island1, possible_island_pairs[i].island2);
+        mx_sort_list(shortest_routes, mx_sort_routes);
+        // for (int j = 0; j < shortest_routes_len; j++) {
+        //     mx_print_route(&shortest_routes[j]);
+        // }
+        for (t_list *j = shortest_routes; j != NULL ; j = j->next) {
             t_route *route = (t_route *)j->data;
-            mx_clear_list(&route->bridges);
-            free(route);
+            mx_print_route(route);
         }
-        mx_clear_list(&possible_routes_list);
+        // for (int j = mx_list_size(shortest_routes) - 1; j >= 0; j--) {
+        //     t_route *route = (t_route *)mx_get_by_index(shortest_routes, j)->data;
+        //     if (route->cur_island == route->dst_island) {
+        //         mx_print_route(route);
+        //     }
+        // }
+        // Freeing
+        mx_free_routes_list(&shortest_routes);
     }
 
     mx_free_islands(islands, islands_len);
     free(islands);
     free(possible_island_pairs);
-
-    
-
-    (void)argc;
 
     return 0;
 }

@@ -21,18 +21,27 @@ t_route *mx_route_dup(t_route *route) {
     return dup_route;
 }
 
+void mx_free_routes_list(t_list **routes_list) {
+    for (t_list *j = *routes_list; j != NULL; j = j->next) {
+        t_route *route = (t_route *)j->data;
+        mx_clear_list(&route->bridges);
+        free(route);
+    }
+    mx_clear_list(routes_list);
+}
+
 bool mx_sort(void *a, void *b) {
     return *(int *)a < *(int *)b ? true : false;
 }
 
 t_list *mx_get_shortest_routes(t_island *src_island, t_island *dst_island) {
-    t_list *possible_routes = NULL;
+    t_list *possible_routes_list = NULL;
 
     src_island->is_passed = true;
 
     for (int i = 0; i < src_island->bridges_len; i++) {
         t_route *new_route = mx_create_route(src_island, dst_island, &src_island->bridges[i]);
-        mx_push_back(&possible_routes, new_route);
+        mx_push_back(&possible_routes_list, new_route);
     }
 
     t_list *add_routes = NULL;
@@ -46,17 +55,17 @@ t_list *mx_get_shortest_routes(t_island *src_island, t_island *dst_island) {
         mx_sort_list(del_route_indexes, mx_sort);
         for (t_list *i = del_route_indexes; i != NULL; i = i->next) {
             int indx = *(int *)i->data;
-            t_list *node = mx_get_by_index(possible_routes, indx);
+            t_list *node = mx_get_by_index(possible_routes_list, indx);
             t_route *route = (t_route *)node->data;
             mx_clear_list(&route->bridges);
             free(route);
-            mx_pop_index(&possible_routes, indx);
+            mx_pop_index(&possible_routes_list, indx);
             free(i->data);
         }
         mx_clear_list(&del_route_indexes);
         for (t_list *i = add_routes; i != NULL ; i = i->next) {
             t_route *route = (t_route *)i->data;
-            mx_push_back(&possible_routes, route);
+            mx_push_back(&possible_routes_list, route);
         }
         mx_clear_list(&add_routes);
         for (t_list *i = set_is_passed_islands; i != NULL; i = i->next) {
@@ -65,7 +74,7 @@ t_list *mx_get_shortest_routes(t_island *src_island, t_island *dst_island) {
         mx_clear_list(&set_is_passed_islands);
 
         index = 0;
-        for (t_list *i = possible_routes; i != NULL; i = i->next, index++) {
+        for (t_list *i = possible_routes_list; i != NULL; i = i->next, index++) {
             t_route *route = (t_route *)i->data;        
             route->cur_pos += 1;
             if (route->cur_bridge->length == route->cur_pos) {
@@ -107,6 +116,16 @@ t_list *mx_get_shortest_routes(t_island *src_island, t_island *dst_island) {
     mx_clear_list(&add_routes);
     mx_clear_list(&set_is_passed_islands);
 
-    return possible_routes;
+    t_list *shortest_routes = NULL;
+    for (t_list *i = possible_routes_list; i != NULL; i = i->next) {
+        t_route *route = (t_route *)i->data;
+        if (route->cur_island == route->dst_island) {
+            mx_push_front(&shortest_routes, mx_route_dup(route));
+        }
+    }
+
+    mx_free_routes_list(&possible_routes_list);
+
+    return shortest_routes;
 }
 
