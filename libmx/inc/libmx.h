@@ -6,9 +6,9 @@
 #include <stdlib.h>
 #include <fcntl.h>
 // For linux
-// #include <malloc.h>
+#include <malloc.h>
 // For macos
-#include <malloc/malloc.h>
+// #include <malloc/malloc.h>
 
 #include <stdio.h>
 

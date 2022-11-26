@@ -13,12 +13,6 @@ t_bridge mx_new_bridge(t_island *island, int length) {
     return new_bridge;
 }
 
-// t_bridge *mx_get_available_bridges(t_island *island, int bridges_len) {
-//     for (int  = 0;  < ; ++) {
-        
-//     }
-// }
-
 t_bridge *mx_get_shortest_untrodden_bridge(t_bridge *bridges, int bridges_len) {
     t_bridge *shortest_bridge = NULL;
     for (int i = 0; i < bridges_len; i++) {

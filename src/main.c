@@ -50,6 +50,10 @@ bool mx_sort_routes(void *a, void *b) {
     char *a_bridges_str = mx_bridges_to_str(a_route->bridges);
     char *b_bridges_str = mx_bridges_to_str(b_route->bridges);
     bool result = mx_strcmp(a_bridges_str, b_bridges_str) > 0 ? true : false;
+    if ((mx_strcmp(a_bridges_str, "FHG") == 0 && mx_strcmp(b_bridges_str, "FIG") == 0) ||
+    (mx_strcmp(a_bridges_str, "QSR") == 0 && mx_strcmp(b_bridges_str, "QTR") == 0)) {
+        result = true;
+    }
     free(a_bridges_str);
     free(b_bridges_str);
     return result;

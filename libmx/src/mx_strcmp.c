@@ -7,13 +7,3 @@ int mx_strcmp(const char *s1, const char *s2) {
     return 0;
 }
 
-// #include <stdio.h>
-// #include <string.h>
-// int main() {
-//     char str1[] = "sde2";
-//     char str2[] = "sdes";
-//     printf("mine: %d\n", mx_strcmp(str1, str2));
-//     printf("syst: %d\n", strcmp(str1, str2));
-//     return 0;
-// }
-
